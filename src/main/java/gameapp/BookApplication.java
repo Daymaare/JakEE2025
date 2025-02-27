@@ -1,4 +1,4 @@
-package bookapp;
+package gameapp;
 
 
 import jakarta.ws.rs.ApplicationPath;
