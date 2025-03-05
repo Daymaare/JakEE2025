@@ -15,10 +15,6 @@ public class GameResponse {
     private LocalDate releaseDate;
     private String upc;
 
-    public GameResponse() {
-
-    }
-
     public GameResponse(String title, String developer, String description, LocalDate releaseDate, String upc) {
         this.title = title;
         this.developer = developer;
