@@ -3,6 +3,7 @@ package gameapp;
 import gameapp.dto.GameResponse;
 import gameapp.entity.Game;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -21,6 +22,7 @@ public class GameResource {
 
     private static final Logger logger = Logger.getLogger(GameResource.class.getName());
 
+    @PersistenceContext(unitName = "gamePU")
     private EntityManager entityManager;
 
     public GameResource() {}
