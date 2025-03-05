@@ -2,8 +2,8 @@ package gameapp;
 
 import gameapp.dto.GameResponse;
 import gameapp.entity.Game;
+import gameapp.mapper.GameMapper;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -22,10 +22,12 @@ public class GameResource {
 
     private static final Logger logger = Logger.getLogger(GameResource.class.getName());
 
-    @PersistenceContext(unitName = "gamePU")
+
     private EntityManager entityManager;
 
-    public GameResource() {}
+    public GameResource() {
+        // default implementation
+    }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -39,20 +41,21 @@ public class GameResource {
 
         var game = entityManager.find(Game.class, gameId);
         logger.info(game.toString());
-        return new GameResponse(
-                game.getTitle(),
-                game.getDeveloper(),
-                game.getDescription(),
-                game.getReleaseDate().toLocalDate(),
-                game.getUpc()
-        );
+        return GameMapper.map(game);
     }
 
     @GET
     @Path("first")
     @Produces(MediaType.APPLICATION_JSON)
     public GameResponse firstCreate() {
-        return new GameResponse("The Legend of Zelda: Breath of the Wild", "Nintendo", "An open-world action-adventure game.", LocalDate.of(2017, 3, 3), "1234567890");
+        Game game = new Game();
+        game.setTitle("The Legend of Zelda: Breath of the Wild");
+        game.setDeveloper("Nintendo");
+        game.setDescription("An open-world action-adventure game.");
+        game.setReleaseDate(LocalDate.of(2017, 3, 3).atStartOfDay());
+        game.setUpc("1234567890");
+
+        return GameMapper.map(game);
     }
 
     @GET
@@ -60,13 +63,14 @@ public class GameResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Games manyCreate() {
         List<GameResponse> games = new ArrayList<>();
-        games.add(new GameResponse("The Legend of Zelda: Breath of the Wild", "Nintendo", "An open-world action-adventure game.", LocalDate.of(2017, 3, 3), "1234567890"));
-        games.add(new GameResponse("The Witcher 3: Wild Hunt", "CD Projekt Red", "An open-world RPG.", LocalDate.of(2015, 5, 19), "1234567891"));
-        games.add(new GameResponse("Red Dead Redemption 2", "Rockstar Games", "An epic tale of life in America at the dawn of the modern age.", LocalDate.of(2018, 10, 26), "1234567892"));
-        games.add(new GameResponse("God of War", "Santa Monica Studio", "An action-adventure game set in Norse mythology.", LocalDate.of(2018, 4, 20), "1234567893"));
-        games.add(new GameResponse("Minecraft", "Mojang", "A sandbox video game.", LocalDate.of(2011, 11, 18), "1234567894"));
+        games.add(new GameResponse(1L, "The Legend of Zelda: Breath of the Wild", "Nintendo", "An open-world action-adventure game.", LocalDate.of(2017, 3, 3), "1234567890"));
+        games.add(new GameResponse(2L, "The Witcher 3: Wild Hunt", "CD Projekt Red", "An open-world RPG.", LocalDate.of(2015, 5, 19), "1234567891"));
+        games.add(new GameResponse(3L, "Red Dead Redemption 2", "Rockstar Games", "An epic tale of life in America at the dawn of the modern age.", LocalDate.of(2018, 10, 26), "1234567892"));
+        games.add(new GameResponse(4L, "God of War", "Santa Monica Studio", "An action-adventure game set in Norse mythology.", LocalDate.of(2018, 4, 20), "1234567893"));
+        games.add(new GameResponse(5L, "Minecraft", "Mojang", "A sandbox video game.", LocalDate.of(2011, 11, 18), "1234567894"));
         return new Games(games, games.size());
     }
 
-    public record Games(List<GameResponse> games, int totalGames) {}
+    public record Games(List<GameResponse> games, int totalGames) {
+    }
 }
