@@ -4,6 +4,12 @@
              xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_2.xsd"
              version="3.2">
     <persistence-unit name="default">
-<class>gameapp.entity.Game</class>
+        <jta-data-source>java:/PostgresDS</jta-data-source>
+        <properties>        <!-- Schema generation options -->
+            <property name="jakarta.persistence.schema-generation.database.action" value="none"/>
+                            <!-- SQL logging -->
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+        </properties>
     </persistence-unit>
 </persistence>
