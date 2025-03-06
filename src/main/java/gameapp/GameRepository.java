@@ -1,4 +1,4 @@
-package gameapp.mapper;
+package gameapp;
 
 import gameapp.entity.Game;
 import jakarta.data.repository.CrudRepository;
