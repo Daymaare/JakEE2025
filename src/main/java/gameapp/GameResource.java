@@ -33,7 +33,7 @@ public class GameResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<GameResponse> getGames() {
         return repository.findAll()
-                .map(GameResponse::new)
+                .map(GameMapper::map)
                 .filter(Objects::nonNull)
                 .toList();
     }
@@ -79,12 +79,12 @@ public class GameResource {
         }
 
         List<Game> createdGames = games.stream()
-                .map(GameMapper::map)  // Mappa varje CreateGame till en Game
-                .map(repository::insert) // Spara varje Game i databasen
+                .map(GameMapper::map)
+                .map(repository::insert)
                 .toList();
 
         List<GameResponse> responses = createdGames.stream()
-                .map(GameResponse::new)  // Mappa varje Game till en GameResponse
+                .map(GameMapper::map)
                 .toList();
 
         return Response.status(Response.Status.CREATED)

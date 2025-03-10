@@ -27,22 +27,22 @@ public class GameMapper {
                 game.getUpc());
     }
 
-    public static Game map(CreateGame game) {
-        if (null == game)
+    public static Game map(CreateGame createGame) {
+        if (null == createGame)
             return null;
 
         log.info(String.format("Mapping CreateGame: title=%s, developer=%s",
-                game.title(), game.developer()));
+                createGame.title(), createGame.developer()));
 
-        Game newGame = new Game();
-        newGame.setTitle(game.title());
-        newGame.setDeveloper(game.developer());
-        newGame.setDescription(game.description());
-        newGame.setReleaseDate(game.releaseDate());
-        newGame.setUpc(game.upc());
+        Game game = new Game();
+        game.setTitle(createGame.title());
+        game.setDeveloper(createGame.developer());
+        game.setDescription(createGame.description());
+        game.setReleaseDate(createGame.releaseDate());
+        game.setUpc(createGame.upc());
 
-        log.info("Mapped Game entity: " + newGame);
+        log.info("Mapped Game entity: " + game);
 
-        return newGame;
+        return game;
     }
 }
