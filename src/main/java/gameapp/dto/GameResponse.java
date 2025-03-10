@@ -2,29 +2,33 @@ package gameapp.dto;
 
 
 import gameapp.entity.Game;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
 
-@Getter
-@Setter
-public class GameResponse {
-    private Long id;
-    private String title;
-    private String developer;
-    private String description;
-    private LocalDate releaseDate;
-    private String upc;
 
-    public GameResponse(Long id,String title, String developer, String description, LocalDate releaseDate, String upc) {
-        this.id = id;
-        this.title = title;
-        this.developer = developer;
-        this.description = description;
-        this.releaseDate = releaseDate;
-        this.upc = upc;
+public record GameResponse(
+        Long id,
+        @NotBlank
+        @NotNull
+        String title,
+        @NotBlank
+        String developer,
+        @Size(max = 500)
+        String description,
+        @Past
+        LocalDate releaseDate,
+        @Pattern(regexp = "^\\d{12}$", message = "UPC must be 12 digits")
+        String upc) {
 
+    public GameResponse(Game game) {
+        this(
+                game.getId(),
+                game.getTitle(),
+                game.getDeveloper(),
+                game.getDescription(),
+                game.getReleaseDate(),
+                game.getUpc());
     }
 
     public static GameResponse map(Game game) {
@@ -33,7 +37,7 @@ public class GameResponse {
                 game.getTitle(),
                 game.getDeveloper(),
                 game.getDescription(),
-                game.getReleaseDate().toLocalDate(),
-                game.getUpc() );
+                game.getReleaseDate(),
+                game.getUpc());
     }
 }

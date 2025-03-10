@@ -1,78 +1,93 @@
 package gameapp;
 
+import gameapp.dto.CreateGame;
 import gameapp.dto.GameResponse;
-import gameapp.entity.Game;
-import gameapp.mapper.GameMapper;
-import jakarta.persistence.EntityManager;
-import jakarta.transaction.Transactional;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.MediaType;
-import lombok.extern.java.Log;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
+import gameapp.entity.Game;
+import gameapp.exceptions.NotFound;
+import gameapp.mapper.GameMapper;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.inject.Inject;
+
 import java.util.List;
-import java.util.logging.Logger;
+import java.util.Objects;
 
 @Path("games")
-@Log
 public class GameResource {
 
-    private static final Logger logger = Logger.getLogger(GameResource.class.getName());
+    private GameRepository repository;
 
-
-    private EntityManager entityManager;
+    @Inject
+    public GameResource(GameRepository repository) {
+        this.repository = repository;
+    }
 
     public GameResource() {
-        // default implementation
     }
 
+    //http://localhost:8080/api/games
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Transactional
-    public GameResponse firstTest() {
-        Game newGame = new Game();
-        entityManager.persist(newGame);
-        entityManager.flush();
-
-        Long gameId = newGame.getId();
-
-        var game = entityManager.find(Game.class, gameId);
-        logger.info(game.toString());
-        return GameMapper.map(game);
+    public List<GameResponse> getGames() {
+        return repository.findAll()
+                .map(GameResponse::new)
+                .filter(Objects::nonNull)
+                .toList();
     }
 
+    //http://localhost:8080/api/games/1
     @GET
-    @Path("first")
+    @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public GameResponse firstCreate() {
-        Game game = new Game();
-        game.setTitle("The Legend of Zelda: Breath of the Wild");
-        game.setDeveloper("Nintendo");
-        game.setDescription("An open-world action-adventure game.");
-        game.setReleaseDate(LocalDate.of(2017, 3, 3).atStartOfDay());
-        game.setUpc("123456789078");
-
-        return GameMapper.map(game);
+    public GameResponse getOneGame(@PathParam("id") Long id) {
+        return repository.findById(id)
+                .map(GameResponse::new)
+                .orElseThrow(() -> new NotFound("Game with ID " + id + " not found"));
     }
 
-    @GET
-    @Path("many")
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Games manyCreate() {
-        List<GameResponse> games = new ArrayList<>();
-        games.add(new GameResponse(1L, "The Legend of Zelda: Breath of the Wild", "Nintendo", "An open-world action-adventure game.", LocalDate.of(2017, 3, 3), "123456789056"));
-        games.add(new GameResponse(2L, "The Witcher 3: Wild Hunt", "CD Projekt Red", "An open-world RPG.", LocalDate.of(2015, 5, 19), "123456789134"));
-        games.add(new GameResponse(3L, "Red Dead Redemption 2", "Rockstar Games", "An epic tale of life in America at the dawn of the modern age.", LocalDate.of(2018, 10, 26), "123456789224"));
-        games.add(new GameResponse(4L, "God of War", "Santa Monica Studio", "An action-adventure game set in Norse mythology.", LocalDate.of(2018, 4, 20), "123456789323"));
-        games.add(new GameResponse(5L, "Minecraft", "Mojang", "A sandbox video game.", LocalDate.of(2011, 11, 18), "123456789412"));
-        return new Games(games, games.size());
+    public Response createNewGame(CreateGame game) {
+        if (game == null) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Game cannot be null")
+                    .build();
+        }
+        Game newGame = GameMapper.map(game);
+        newGame = repository.insert(newGame);
+        GameResponse response = new GameResponse(newGame);
+        return Response.status(Response.Status.CREATED)
+                .header("Location", "/api/games/" + newGame.getId())
+                .entity(response)
+                .build();
     }
 
-   // public GameResponse
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createNewGames(List<CreateGame> games) {
+        if (games == null || games.isEmpty()) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Game list cannot be null or empty")
+                    .build();
+        }
 
-    public record Games(List<GameResponse> games, int totalGames) {
+        List<Game> createdGames = games.stream()
+                .map(GameMapper::map)  // Mappa varje CreateGame till en Game
+                .map(repository::insert) // Spara varje Game i databasen
+                .toList();
+
+        List<GameResponse> responses = createdGames.stream()
+                .map(GameResponse::new)  // Mappa varje Game till en GameResponse
+                .toList();
+
+        return Response.status(Response.Status.CREATED)
+                .entity(responses)
+                .build();
     }
+
+
 }

@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Setter
@@ -31,9 +31,9 @@ public class Game {
     private String description;
 
     @Past(message = "Release date must be in the past")
-    private LocalDateTime releaseDate;
+    private LocalDate releaseDate;
 
-    @Pattern(regexp = "^\\d{10}$", message = "UPC must be 12 digits")
+    @Pattern(regexp = "^\\d{12}$", message = "UPC must be 12 digits")
     private String upc; //Universal Product Code
 
 
