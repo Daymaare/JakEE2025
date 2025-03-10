@@ -25,6 +25,7 @@ public class GameResource {
     }
 
     public GameResource() {
+        this.repository = null;
     }
 
     //http://localhost:8080/api/games
@@ -43,7 +44,7 @@ public class GameResource {
     @Produces(MediaType.APPLICATION_JSON)
     public GameResponse getOneGame(@PathParam("id") Long id) {
         return repository.findById(id)
-                .map(GameResponse::new)
+                .map(GameMapper::map)
                 .orElseThrow(() -> new NotFound("Game with ID " + id + " not found"));
     }
 
@@ -65,7 +66,9 @@ public class GameResource {
                 .build();
     }
 
+    //http://localhost:8080/api/games/batch
     @POST
+    @Path("batch")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createNewGames(List<CreateGame> games) {
