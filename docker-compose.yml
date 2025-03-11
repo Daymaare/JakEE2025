@@ -10,6 +10,18 @@ services:
       - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
+  server:
+    profiles:
+      - production
+    build:
+      context: .
+    environment:
+      DB_HOST: postgres
+      DB_NAME: example
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+    ports:
+      - "8080:8080"
 
 volumes:
   postgres-data:

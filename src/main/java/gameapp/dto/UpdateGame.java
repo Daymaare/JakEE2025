@@ -6,7 +6,6 @@ import java.time.LocalDate;
 
 public record UpdateGame(
         @NotBlank
-        @NotNull
         String title,
         @NotBlank
         String developer,

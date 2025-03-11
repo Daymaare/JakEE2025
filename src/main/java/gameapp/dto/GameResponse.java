@@ -2,15 +2,24 @@ package gameapp.dto;
 
 
 import gameapp.entity.Game;
-import jakarta.validation.constraints.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 
 
 public record GameResponse(
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        @Column(nullable = false)
         Long id,
         @NotBlank
-        @NotNull
         String title,
         @NotBlank
         String developer,
