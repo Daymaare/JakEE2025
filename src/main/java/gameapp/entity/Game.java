@@ -61,4 +61,5 @@ public class Game {
     public final int hashCode() {
         return getClass().hashCode();
     }
+
 }

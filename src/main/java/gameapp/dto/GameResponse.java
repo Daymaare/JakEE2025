@@ -40,13 +40,4 @@ public record GameResponse(
                 game.getUpc());
     }
 
-    public static GameResponse map(Game game) {
-        return new GameResponse(
-                game.getId(),
-                game.getTitle(),
-                game.getDeveloper(),
-                game.getDescription(),
-                game.getReleaseDate(),
-                game.getUpc());
-    }
 }
