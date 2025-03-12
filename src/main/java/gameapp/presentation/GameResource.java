@@ -87,9 +87,9 @@ public class GameResource {
     @PATCH
     @Path("{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public GameResponse updateGame(@PathParam("id") Long id, @Valid UpdateGame updateGame) {
-        return gameService.updateGame(updateGame, id);
+    public Response updateGame(@Valid UpdateGame game, @PathParam("id") Long id) {
+        gameService.updateGame(game, id);
+        return Response.noContent().build();
     }
 
 
