@@ -1,4 +1,4 @@
-package gameapp;
+package gameapp.persistence;
 
 import gameapp.entity.Game;
 import jakarta.data.repository.CrudRepository;
@@ -13,4 +13,11 @@ public interface GameRepository extends CrudRepository<Game, Long> {
 
     @Find
     Optional<Game> findByTitleAndDeveloper(String title, String developer);
+
+    @Find
+    Optional<Game> findByDeveloper(String developer);
+
+    @Find
+    Optional<Game> findByTitle(String title);
+
 }

@@ -1,5 +1,6 @@
-package gameapp;
+package gameapp.business;
 
+import gameapp.persistence.GameRepository;
 import gameapp.dto.CreateGame;
 import gameapp.dto.GameResponse;
 import gameapp.dto.UpdateGame;
@@ -96,5 +97,11 @@ public class GameService {
         game.setUpc(updateGame.upc());
         return map(gameRepository.insert(game));
 
+    }
+
+    public List<GameResponse> findDeveloper(@Valid String developer) {
+        return gameRepository.findByDeveloper(developer.trim())
+                .map(GameMapper::map)
+                .stream().toList();
     }
 }

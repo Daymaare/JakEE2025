@@ -1,8 +1,10 @@
-package gameapp;
+package gameapp.presentation;
 
+import gameapp.business.GameService;
 import gameapp.dto.CreateGame;
 import gameapp.dto.GameResponse;
 
+import gameapp.dto.ResponseDto;
 import gameapp.dto.UpdateGame;
 import gameapp.entity.Game;
 import jakarta.validation.Valid;
@@ -32,12 +34,12 @@ public class GameResource {
     //http://localhost:8080/api/games
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<GameResponse> getGames() {
+    public ResponseDto getAllGames() {
         log.info("Getting all games...");
-        return gameService.getAllGames();
+        return new ResponseDto(gameService.getAllGames());
     }
 
-    //http://localhost:8080/api/games/1
+    //http://localhost:8080/api/games/{{id}}
     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -46,6 +48,7 @@ public class GameResource {
         return gameService.getGameById(id);
     }
 
+    //http://localhost:8080/api/games
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -74,18 +77,28 @@ public class GameResource {
                     .entity("Game list cannot be null or empty")
                     .build();
         }
-        List<GameResponse> gameResponses = gameService.createGames(createGames); // Delegate to the service layer
+        List<GameResponse> gameResponses = gameService.createGames(createGames);
         return Response.status(Response.Status.CREATED)
                 .entity(gameResponses)
                 .build();
     }
 
-    @PUT
+    //http:localhost:8080/api/games/{{id}}
+    @PATCH
     @Path("{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public GameResponse updateGame(@PathParam("id") Long id, @Valid UpdateGame updateGame) {
         return gameService.updateGame(updateGame, id);
+    }
+
+
+    //http:localhost:8080/api/games/developer/{{developer}}
+    @GET
+    @Path("developer/{developer}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public ResponseDto findDeveloper(@PathParam("developer") String developer) {
+        return new ResponseDto(gameService.findDeveloper(developer));
     }
 
 }
