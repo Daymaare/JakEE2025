@@ -86,16 +86,18 @@ public class GameService {
                 .toList();
     }
 
-    public GameResponse updateGame(@Valid UpdateGame updateGame, Long id) {
-        Game game = gameRepository.findById(id)
+    public void updateGame(@Valid UpdateGame newGame, Long id) {
+        Game oldGame = gameRepository.findById(id)
                 .orElseThrow(() -> new NotFound("Game with id " + id + " not found"));
-
-        game.setTitle(updateGame.title());
-        game.setDeveloper(updateGame.developer());
-        game.setDescription(updateGame.description());
-        game.setReleaseDate(updateGame.releaseDate());
-        game.setUpc(updateGame.upc());
-        return map(gameRepository.insert(game));
+        if (newGame.title() != null)
+            oldGame.setTitle(newGame.title());
+        if (newGame.developer() != null)
+            oldGame.setDeveloper(newGame.developer());
+        if (newGame.description() != null)
+            oldGame.setDescription(newGame.description());
+        if (newGame.upc() != null)
+            oldGame.setUpc(newGame.upc());
+        gameRepository.update(oldGame);
 
     }
 
