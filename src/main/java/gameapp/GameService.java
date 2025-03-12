@@ -14,7 +14,6 @@ import lombok.extern.java.Log;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static gameapp.mapper.GameMapper.map;
 
@@ -37,7 +36,7 @@ public class GameService {
         log.info("Getting all games...");
         return gameRepository.findAll()
                 .filter(Objects::nonNull)
-                .map(GameResponse::new)
+                .map(GameMapper::map)
                 .toList();
     }
 
@@ -69,7 +68,7 @@ public class GameService {
                 .map(GameMapper::map)
                 .map(gameRepository::insert)
                 .map(GameMapper::map)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public GameResponse updateGame(@Valid UpdateGame updateGame, Long id) {

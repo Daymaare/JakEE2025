@@ -14,6 +14,7 @@ import java.util.Objects;
 @Setter
 @Getter
 @Entity
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"title", "developer"}))
 public class Game {
 
     @Id
