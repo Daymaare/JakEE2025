@@ -48,16 +48,21 @@ public class GameService {
                         () -> new NotFound("Game with ID " + id + " not found"));
     }
 
-    public Game createGame(@Valid CreateGame game) {
-        if (game == null) {
+    public Game createGame(@Valid CreateGame createGame) {
+        if (createGame == null) {
             log.warning("Game cannot be null");
             throw new IllegalArgumentException("Game cannot be null");
         }
-        log.info("Creating game: " + game);
-        var newGame = map(game);
-        newGame = gameRepository.insert(newGame);
-        return newGame;
-
+        log.info("Creating game: " + createGame);
+        gameRepository.findByTitleAndDeveloper(createGame.title(), createGame.developer())
+                .ifPresent(existingGame -> {
+                    throw new IllegalStateException(
+                            "A game with the title '" + createGame.title() + "' and developer '"
+                                    + createGame.developer() + "' already exists"
+                    );
+                });
+    Game game = GameMapper.map(createGame);
+    return gameRepository.insert(game);
     }
 
     public List<GameResponse> createGames(@Valid List<CreateGame> createGames) {
