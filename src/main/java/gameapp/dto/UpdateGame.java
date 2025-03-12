@@ -6,13 +6,12 @@ import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 
 public record UpdateGame(
-        @NotBlank
+
         String title,
 
-        @NotBlank
         String developer,
 
-        @Size(max = 500)
+        @Size(max = 500, message = "Description cannot exceed 500 characters")
         String description,
 
         @Past
