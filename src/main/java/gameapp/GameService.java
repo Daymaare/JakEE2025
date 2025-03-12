@@ -61,14 +61,23 @@ public class GameService {
                                     + createGame.developer() + "' already exists"
                     );
                 });
-    Game game = GameMapper.map(createGame);
-    return gameRepository.insert(game);
+        Game game = GameMapper.map(createGame);
+        return gameRepository.insert(game);
     }
 
     public List<GameResponse> createGames(@Valid List<CreateGame> createGames) {
         if (createGames == null || createGames.isEmpty()) {
             throw new IllegalArgumentException("Game list cannot be null or empty");
         }
+        createGames.forEach(createGame -> gameRepository
+                .findByTitleAndDeveloper(createGame.title(), createGame.developer())
+                .ifPresent(existingGame -> {
+                    throw new IllegalStateException(
+                            "A game with the title '" + createGame.title() + "' and developer '"
+                                    + createGame.developer() + "' already exists"
+                    );
+                }));
+
         return createGames.stream()
                 .map(GameMapper::map)
                 .map(gameRepository::insert)

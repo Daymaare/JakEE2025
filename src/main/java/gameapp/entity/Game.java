@@ -34,6 +34,7 @@ public class Game {
     @Past(message = "Release date must be in the past")
     private LocalDate releaseDate;
 
+    @Column(unique = true)
     @Pattern(regexp = "^\\d{12}$", message = "UPC must be 12 digits")
     private String upc; //Universal Product Code
 
