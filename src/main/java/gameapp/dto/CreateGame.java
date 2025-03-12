@@ -12,7 +12,7 @@ public record CreateGame(
         @NotBlank
         String developer,
 
-        @Size(max = 500)
+        @Size(max = 500, message = "Description cannot exceed 500 characters")
         String description,
 
         @Past

@@ -1,10 +1,7 @@
 package gameapp.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,7 +25,7 @@ public class Game {
     @NotBlank(message = "Developer is required")
     private String developer;
 
-    @Size(max = 500)
+    @Size(max = 500, message = "Description cannot exceed 500 characters")
     private String description;
 
     @Past(message = "Release date must be in the past")
