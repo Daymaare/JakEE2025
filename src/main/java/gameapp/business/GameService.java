@@ -16,8 +16,6 @@ import lombok.extern.java.Log;
 import java.util.List;
 import java.util.Objects;
 
-import static gameapp.mapper.GameMapper.map;
-
 @ApplicationScoped
 @Log
 public class GameService {
@@ -56,7 +54,7 @@ public class GameService {
         }
         log.info("Creating game: " + createGame);
         gameRepository.findByTitleAndDeveloper(createGame.title(), createGame.developer())
-                .ifPresent(existingGame -> {
+                .forEach(existingGame -> {
                     throw new IllegalStateException(
                             "A game with the title '" + createGame.title() + "' and developer '"
                                     + createGame.developer() + "' already exists"
@@ -72,7 +70,7 @@ public class GameService {
         }
         createGames.forEach(createGame -> gameRepository
                 .findByTitleAndDeveloper(createGame.title(), createGame.developer())
-                .ifPresent(existingGame -> {
+                .forEach(existingGame -> {
                     throw new IllegalStateException(
                             "A game with the title '" + createGame.title() + "' and developer '"
                                     + createGame.developer() + "' already exists"
@@ -87,8 +85,10 @@ public class GameService {
     }
 
     public void updateGame(@Valid UpdateGame newGame, Long id) {
+        log.info("Updating game with ID " + id);
         Game oldGame = gameRepository.findById(id)
                 .orElseThrow(() -> new NotFound("Game with id " + id + " not found"));
+        log.info("Old game: " + oldGame);
         if (newGame.title() != null)
             oldGame.setTitle(newGame.title());
         if (newGame.developer() != null)
@@ -97,13 +97,23 @@ public class GameService {
             oldGame.setDescription(newGame.description());
         if (newGame.upc() != null)
             oldGame.setUpc(newGame.upc());
+        log.info("Updated game: " + oldGame);
         gameRepository.update(oldGame);
 
     }
 
     public List<GameResponse> findDeveloper(@Valid String developer) {
         return gameRepository.findByDeveloper(developer.trim())
+                .stream()
                 .map(GameMapper::map)
-                .stream().toList();
+                .toList();
+    }
+
+    public List<GameResponse> findTitle(@Valid String title){
+        return gameRepository.findByTitle(title.trim())
+                .stream()
+                .map(GameMapper::map)
+                .toList();
+
     }
 }
