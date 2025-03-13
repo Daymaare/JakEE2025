@@ -51,11 +51,6 @@ public class GameResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createNewGame(@Valid CreateGame createGame) {
-        if (createGame == null) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Game data cannot be null")
-                    .build();
-        }
         Game newGame = gameService.createGame(createGame);
         return Response.status(Response.Status.CREATED)
                 .header("Location", "/api/games/" + newGame.getId())
@@ -69,11 +64,6 @@ public class GameResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createNewGames(@Valid List<CreateGame> createGames) {
-        if (createGames == null || createGames.isEmpty()) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Game list cannot be null or empty")
-                    .build();
-        }
         List<GameResponse> gameResponses = gameService.createGames(createGames);
         return Response.status(Response.Status.CREATED)
                 .entity(gameResponses)

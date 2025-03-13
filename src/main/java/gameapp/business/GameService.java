@@ -1,5 +1,6 @@
 package gameapp.business;
 
+import gameapp.exceptions.BadRequest;
 import gameapp.persistence.GameRepository;
 import gameapp.dto.CreateGame;
 import gameapp.dto.GameResponse;
@@ -32,6 +33,8 @@ public class GameService {
     }
 
     public List<GameResponse> getAllGames() {
+        if(List.of(gameRepository.findAll().toArray()).isEmpty())
+            throw new NotFound("No games found");
         log.info("Getting all games...");
         return gameRepository.findAll()
                 .filter(Objects::nonNull)
@@ -40,6 +43,8 @@ public class GameService {
     }
 
     public GameResponse getGameById(@PathParam("id") Long id) {
+        if(gameRepository.findById(id).isEmpty())
+            throw new NotFound("Game with ID " + id + " not found");
         log.info("Getting game with ID " + id);
         return gameRepository.findById(id)
                 .map(GameMapper::map)
@@ -50,12 +55,12 @@ public class GameService {
     public Game createGame(@Valid CreateGame createGame) {
         if (createGame == null) {
             log.warning("Game cannot be null");
-            throw new IllegalArgumentException("Game cannot be null");
+            throw new BadRequest("Game cannot be null");
         }
         log.info("Creating game: " + createGame);
         gameRepository.findByTitleAndDeveloper(createGame.title(), createGame.developer())
                 .forEach(existingGame -> {
-                    throw new IllegalStateException(
+                    throw new BadRequest(
                             "A game with the title '" + createGame.title() + "' and developer '"
                                     + createGame.developer() + "' already exists"
                     );
@@ -66,12 +71,12 @@ public class GameService {
 
     public List<GameResponse> createGames(@Valid List<CreateGame> createGames) {
         if (createGames == null || createGames.isEmpty()) {
-            throw new IllegalArgumentException("Game list cannot be null or empty");
+            throw new BadRequest("Game list cannot be null or empty");
         }
         createGames.forEach(createGame -> gameRepository
                 .findByTitleAndDeveloper(createGame.title(), createGame.developer())
                 .forEach(existingGame -> {
-                    throw new IllegalStateException(
+                    throw new BadRequest(
                             "A game with the title '" + createGame.title() + "' and developer '"
                                     + createGame.developer() + "' already exists"
                     );
@@ -103,6 +108,11 @@ public class GameService {
     }
 
     public List<GameResponse> findDeveloper(@Valid String developer) {
+        if (developer == null || developer.trim().isEmpty()) {
+            throw new BadRequest("Developer cannot be null or empty");
+        }
+        if(gameRepository.findByDeveloper(developer.trim()).isEmpty())
+            throw new NotFound("Game with developer " + developer + " not found");
         return gameRepository.findByDeveloper(developer.trim())
                 .stream()
                 .map(GameMapper::map)
@@ -110,6 +120,11 @@ public class GameService {
     }
 
     public List<GameResponse> findTitle(@Valid String title){
+        if (title == null || title.trim().isEmpty()) {
+            throw new BadRequest("Title cannot be null or empty");
+        }
+        if(gameRepository.findByTitle(title.trim()).isEmpty())
+            throw new NotFound("Game with title " + title + " not found");
         return gameRepository.findByTitle(title.trim())
                 .stream()
                 .map(GameMapper::map)
