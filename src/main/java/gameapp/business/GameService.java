@@ -33,23 +33,25 @@ public class GameService {
     }
 
     public List<GameResponse> getAllGames() {
-        if(List.of(gameRepository.findAll().toArray()).isEmpty())
+        List<Game> games = gameRepository.findAll().toList();
+        if (games.isEmpty()) {
             throw new NotFound("No games found");
+        }
         log.info("Getting all games...");
-        return gameRepository.findAll()
+        return games.stream()
                 .filter(Objects::nonNull)
                 .map(GameMapper::map)
                 .toList();
     }
 
     public GameResponse getGameById(@PathParam("id") Long id) {
-        if(gameRepository.findById(id).isEmpty())
+        var game = gameRepository.findById(id);
+        if (game.isEmpty()) {
             throw new NotFound("Game with ID " + id + " not found");
+        }
         log.info("Getting game with ID " + id);
-        return gameRepository.findById(id)
-                .map(GameMapper::map)
-                .orElseThrow(
-                        () -> new NotFound("Game with ID " + id + " not found"));
+        return game.map(GameMapper::map).orElseThrow(
+                () -> new NotFound("Game with ID " + id + " not found"));
     }
 
     public Game createGame(@Valid CreateGame createGame) {
@@ -111,24 +113,25 @@ public class GameService {
         if (developer == null || developer.trim().isEmpty()) {
             throw new BadRequest("Developer cannot be null or empty");
         }
-        if(gameRepository.findByDeveloper(developer.trim()).isEmpty())
+        var games = gameRepository.findByDeveloper(developer.trim());
+        if (games.isEmpty()) {
             throw new NotFound("Game with developer " + developer + " not found");
-        return gameRepository.findByDeveloper(developer.trim())
-                .stream()
+        }
+        return games.stream()
                 .map(GameMapper::map)
                 .toList();
     }
 
-    public List<GameResponse> findTitle(@Valid String title){
+    public List<GameResponse> findTitle(@Valid String title) {
         if (title == null || title.trim().isEmpty()) {
             throw new BadRequest("Title cannot be null or empty");
         }
-        if(gameRepository.findByTitle(title.trim()).isEmpty())
+        var games = gameRepository.findByTitle(title.trim());
+        if (games.isEmpty()) {
             throw new NotFound("Game with title " + title + " not found");
-        return gameRepository.findByTitle(title.trim())
-                .stream()
+        }
+        return games.stream()
                 .map(GameMapper::map)
                 .toList();
-
     }
 }
