@@ -35,7 +35,6 @@ public class GameResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public ResponseDto getAllGames() {
-        log.info("Getting all games...");
         return new ResponseDto(gameService.getAllGames());
     }
 
@@ -44,7 +43,6 @@ public class GameResource {
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public GameResponse getOneGame(@PathParam("id") Long id) {
-        log.info("Getting game with ID " + id + "...");
         return gameService.getGameById(id);
     }
 
@@ -59,7 +57,6 @@ public class GameResource {
                     .build();
         }
         Game newGame = gameService.createGame(createGame);
-        log.info("Created game: " + newGame);
         return Response.status(Response.Status.CREATED)
                 .header("Location", "/api/games/" + newGame.getId())
                 .entity(newGame)
@@ -95,10 +92,18 @@ public class GameResource {
 
     //http:localhost:8080/api/games/developer/{{developer}}
     @GET
-    @Path("developer/{developer}")
+    @Path("/developer/{developer}")
     @Produces(MediaType.APPLICATION_JSON)
     public ResponseDto findDeveloper(@PathParam("developer") String developer) {
         return new ResponseDto(gameService.findDeveloper(developer));
     }
 
+    //http://localhost:8080/api/games/title/{{title}}
+    @GET
+    @Path("/title/{title}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public ResponseDto findTitle(@PathParam("title") String title) {
+        return new ResponseDto(gameService.findTitle(title));
+
+    }
 }
