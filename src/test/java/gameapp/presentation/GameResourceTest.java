@@ -1,6 +1,7 @@
 package gameapp.presentation;
 
 import gameapp.business.GameService;
+import gameapp.dto.GameResponse;
 import gameapp.exceptions.NotFound;
 import gameapp.exceptions.mapper.NotFoundMapper;
 import jakarta.ws.rs.ext.ExceptionMapper;
@@ -35,9 +36,9 @@ class GameResourceTest {
         dispatcher = MockDispatcherFactory.createDispatcher();
         GameResource gameResource = new GameResource(gameService);
         dispatcher.getRegistry().addSingletonResource(gameResource);
-        // Create your custom ExceptionMapper
+
         ExceptionMapper<NotFound> mapper = new NotFoundMapper();
-        // Register your custom ExceptionMapper
+
         dispatcher.getProviderFactory().registerProviderInstance(mapper);
     }
 
@@ -48,9 +49,23 @@ class GameResourceTest {
         MockHttpRequest request = MockHttpRequest.get("/games");
         MockHttpResponse response = new MockHttpResponse();
         dispatcher.invoke(request, response);
-        // Assert the response status code and content
+
         assertEquals(200, response.getStatus());
         assertEquals("""
                 {"data":[]}""", response.getContentAsString());
+    }
+
+    @Test
+    void getOneBook() throws URISyntaxException, UnsupportedEncodingException {
+        GameResponse testGameResponse = new GameResponse(1L, "Test Title", "Test Developer", "Test Description", null, "123456789012");
+        Mockito.when(gameService.getGameById(1L)).thenReturn(testGameResponse);
+        MockHttpRequest request = MockHttpRequest.get("/games/1");
+        MockHttpResponse response = new MockHttpResponse();
+        dispatcher.invoke(request, response);
+
+        assertEquals(200, response.getStatus());
+        assertEquals("""
+                        {"id":1,"title":"Test Title","developer":"Test Developer","description":"Test Description","releaseDate":null,"upc":"123456789012"}""",
+                response.getContentAsString());
     }
 }
