@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -64,7 +65,8 @@ class GameServiceTest {
 
     @Test
     void createGame() {
-        CreateGame createGame = new CreateGame("Title", "Developer", "Description", null, "123456789012");
+        LocalDate releaseDate = LocalDate.of(2020, 1, 1);
+        CreateGame createGame = new CreateGame("Title", "Developer", "Description", releaseDate, "123456789012");
         Game game = GameMapper.map(createGame);
         Mockito.when(gameRepository.insert(Mockito.any(Game.class))).thenReturn(game);
 
@@ -74,6 +76,7 @@ class GameServiceTest {
                 () -> assertEquals("Title", createdGame.getTitle()),
                 () -> assertEquals("Developer", createdGame.getDeveloper()),
                 () -> assertEquals("Description", createdGame.getDescription()),
+                () -> assertEquals(releaseDate, createdGame.getReleaseDate()),
                 () -> assertEquals("123456789012", createdGame.getUpc())
         );
         Mockito.verify(gameRepository, Mockito.times(1)).insert(Mockito.any(Game.class));
