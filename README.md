@@ -1,89 +1,90 @@
-# Installationsguide för Projektet
+# Game Application Installation and Usage Guide
 
-Denna guide beskriver hur du klonar projektet från GitHub och installerar det med Docker Compose. 
+This guide provides instructions on how to clone, set up, and use the Game Application using Docker Compose. 
+It also includes details on how to interact with the API endpoints provided by the application.
 
-## Förutsättningar
+## Prerequisites
 
-Innan du installerar projektet, se till att du har följande installerat på din maskin:
+Before installing the project, ensure you have the following installed on your machine:
 
-- **Java 23**: Kontrollera att du har Java 23 installerat genom att köra `java -version` i terminalen.
-- **Docker**: Ladda ner och installera Docker från Docker's officiella webbplats https://www.docker.com/get-started.
-- **Docker Compose**: Detta ingår vanligtvis med Docker Desktop.
+- **Java 23**: Verify that you have Java 23 installed by running `java -version` in your terminal.
+- **Docker**: Download and install Docker from [Docker's official website](https://www.docker.com/get-started).
+- **Docker Compose**: This is typically included with Docker Desktop.
 
-## Klona Projektet från GitHub
+## Clone the Project from GitHub
 
-1. Öppna terminalen och klona projektet till din lokala maskin:
+1. Open your terminal and clone the project to your local machine:
 
    ```bash
    git clone https://github.com/Daymaare/JakEE2025
    cd JakEE2025
    ```
 
-## Installera och Köra med Docker Compose
+## Install and Run with Docker Compose
 
-1. Se till att du befinner dig i projektets rotkatalog där `docker-compose.yml`-filen finns.
+1. Ensure you are in the root directory of the project where the `docker-compose.yml`-file is located.
 
-2. Starta applikationen med Docker Compose:
+2. Start the application with Docker Compose:
 
    ```bash
    docker-compose --profile production up
    ```
 
-   Detta kommando bygger och startar alla tjänster som definieras i `docker-compose.yml`.
+   This command builds and starts all services defined in the `docker-compose.yml`.
 
-3. När alla tjänster har startats, kan du komma åt applikationen genom att 
-   öppna din webbläsare och navigera till `http://localhost:8080`.
+3. Once all services have started, you can access the application by 
+   opening your web browser and navigating to `http://localhost:8080`.
 
-## Använda Applikationens Funktioner
+## Using the Application's Features
 
-### API-Åtkomst
+### API-Endpoints
 
-Applikationen erbjuder flera API-endpoints för att interagera med speldata. Här är några exempel:
+The application offers several API endpoints to interact with game data. Here are the available endpoints:
 
-- **Hämta alla spel**: 
+- **Get all games**: 
   - Endpoint: `GET /api/games`
-  - Beskrivning: Hämtar en lista över alla spel.
+  - Description: Retrieves a list of all games.
 
-- **Hämta ett specifikt spel**:
+- **Get a specific game**:
   - Endpoint: `GET /api/games/{id}`
-  - Beskrivning: Hämtar detaljer för ett specifikt spel baserat på dess ID.
+  - Description: Retrieves details for a specific game based on its ID.
 
-- **Skapa ett nytt spel**:
+- **Create a new game**:
   - Endpoint: `POST /api/games`
-  - Beskrivning: Skapar ett nytt spel med de angivna detaljerna.
-  - Exempel på JSON-begäran:
+  - Description: Creates a new game with the specified details.
+  - Example JSON request:
     ```json
     {
       "title": "Nytt Spel",
       "developer": "Spelutvecklare",
       "description": "Beskrivning av spelet",
-      "release_date": "2024-01-01",
+      "releaseDate": "2024-01-01",
       "upc": "123456789012"
     }
     ```
 
-- **Uppdatera ett spel**:
+- **Update a game**:
   - Endpoint: `PATCH /api/games/{id}`
-  - Beskrivning: Uppdaterar detaljerna för ett befintligt spel.
+  - Description: Updates the details of an existing game.
 
-- **Sök efter spel med titel**:
+- **Search for games by title**:
   - Endpoint: `GET /api/games/title/{title}`
-  - Beskrivning: Söker efter spel baserat på titeln.
+  - Description: Searches for games based on the title.
 
-- **Sök efter spel med utvecklare**:
+- **Search for games by developer**:
   - Endpoint: `GET /api/games/developer/{developer}`
-  - Beskrivning: Söker efter spel baserat på utvecklarens namn.
+  - Description: Searches for games based on the developer.
 
-## Felsökning
+## Troubleshooting
 
-- Kontrollera att Docker och Docker Compose körs korrekt.
-- Om du stöter på problem, kontrollera loggarna för mer information:
+- Ensure that Docker and Docker Compose are running correctly.
+- If you encounter problems, check the logs for more information:
 
   ```bash
   docker-compose logs
   ```
 
-## Sammanfattning
+## Summary
 
-Du har nu klonat och installerat projektet med Docker Compose och lärt dig hur du använder dess funktioner. 
-Se till att alla förutsättningar är uppfyllda för att säkerställa en smidig installation och användning.
+You have now cloned and installed the project with Docker Compose and learned how to use its features. 
+Ensure that all prerequisites are met to ensure a smooth installation and usage.
