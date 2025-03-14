@@ -102,6 +102,8 @@ public class GameService {
             oldGame.setDeveloper(newGame.developer());
         if (newGame.description() != null)
             oldGame.setDescription(newGame.description());
+        if(newGame.releaseDate() != null)
+            oldGame.setReleaseDate(newGame.releaseDate());
         if (newGame.upc() != null)
             oldGame.setUpc(newGame.upc());
         log.info("Updated game: " + oldGame);
