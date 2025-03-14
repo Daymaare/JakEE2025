@@ -32,7 +32,7 @@ class GameServiceTest {
     GameService gameService;
 
     @Test
-    void getAllGames() {
+    void getAllGamesReturnsListOfGamesWhenGamesExist() {
         Game game1 = new Game();
         Game game2 = new Game();
         Mockito.when(gameRepository.findAll()).thenReturn(Stream.of(game1, game2));
@@ -44,7 +44,7 @@ class GameServiceTest {
     }
 
     @Test
-    void getAllGames_NotFound() {
+    void getAllGamesThrowsNotFoundExceptionWhenNoGamesExist() {
         Mockito.when(gameRepository.findAll()).thenReturn(Stream.empty());
 
         NotFound exception = assertThrows(NotFound.class, () -> gameService.getAllGames());
@@ -52,7 +52,7 @@ class GameServiceTest {
     }
 
     @Test
-    void getGameById() {
+    void getGameByIdReturnsGameResponseWhenGameExists() {
         Game game = new Game();
         game.setId(1L);
         Mockito.when(gameRepository.findById(1L)).thenReturn(Optional.of(game));
@@ -64,7 +64,7 @@ class GameServiceTest {
     }
 
     @Test
-    void createGame() {
+    void createGameReturnsCreatedGameWhenValidInput() {
         LocalDate releaseDate = LocalDate.of(2020, 1, 1);
         CreateGame createGame = new CreateGame("Title", "Developer", "Description", releaseDate, "123456789012");
         Game game = GameMapper.map(createGame);
@@ -83,7 +83,7 @@ class GameServiceTest {
     }
 
     @Test
-    void getGameById_NotFound() {
+    void getGameByIdThrowsNotFoundExceptionWhenGameDoesNotExist() {
         Mockito.when(gameRepository.findById(1L)).thenReturn(Optional.empty());
 
         NotFound exception = assertThrows(NotFound.class, () -> gameService.getGameById(1L));
@@ -91,7 +91,7 @@ class GameServiceTest {
     }
 
     @Test
-    void createGame_BadRequest() {
+    void createGameThrowsBadRequestExceptionWhenInputIsNull() {
         CreateGame createGame = null;
 
         BadRequest exception = assertThrows(BadRequest.class, () -> gameService.createGame(createGame));
@@ -99,7 +99,7 @@ class GameServiceTest {
     }
 
     @Test
-    void updateGame() {
+    void updateGameUpdatesGameWhenGameExists() {
         UpdateGame updateGame = new UpdateGame("New Title", null, null, null, null);
         Game existingGame = new Game();
         existingGame.setId(1L);
@@ -113,7 +113,7 @@ class GameServiceTest {
     }
 
     @Test
-    void updateGame_NotFound() {
+    void updateGameThrowsNotFoundExceptionWhenGameDoesNotExist() {
         UpdateGame updateGame = new UpdateGame("New Title", null, null, null, null);
         Mockito.when(gameRepository.findById(1L)).thenReturn(Optional.empty());
 
@@ -122,7 +122,8 @@ class GameServiceTest {
     }
 
     @Test
-    void findDeveloper() {
+    void findDeveloperReturnsGamesWhenDeveloperExists
+            () {
         Game game = new Game();
         game.setDeveloper("Developer");
         Mockito.when(gameRepository.findByDeveloper("Developer")).thenReturn(List.of(game));
@@ -134,7 +135,7 @@ class GameServiceTest {
     }
 
     @Test
-    void findDeveloper_NotFound() {
+    void findDeveloperThrowsNotFoundExceptionWhenDeveloperDoesNotExist() {
         Mockito.when(gameRepository.findByDeveloper("Developer")).thenReturn(List.of());
 
         NotFound exception = assertThrows(NotFound.class, () -> gameService.findDeveloper("Developer"));
@@ -142,7 +143,7 @@ class GameServiceTest {
     }
 
     @Test
-    void findTitle() {
+    void findTitleReturnsGamesWhenTitleExists() {
         Game game = new Game();
         game.setTitle("Title");
         Mockito.when(gameRepository.findByTitle("Title")).thenReturn(Optional.of(game));
@@ -154,7 +155,7 @@ class GameServiceTest {
     }
 
     @Test
-    void findTitle_NotFound() {
+    void findTitleThrowsNotFoundExceptionWhenTitleDoesNotExist() {
         Mockito.when(gameRepository.findByTitle("Title")).thenReturn(Optional.empty());
 
         NotFound exception = assertThrows(NotFound.class, () -> gameService.findTitle("Title"));

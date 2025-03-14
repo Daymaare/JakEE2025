@@ -48,7 +48,7 @@ class GameResourceTest {
     }
 
     @Test
-    void getAllBooks() throws URISyntaxException, UnsupportedEncodingException {
+    void getAllGamesReturnsEmptyListWhenNoGamesExist() throws URISyntaxException, UnsupportedEncodingException {
         Mockito.when(gameService.getAllGames()).thenReturn(List.of());
 
         MockHttpRequest request = MockHttpRequest.get("/games");
@@ -61,7 +61,7 @@ class GameResourceTest {
     }
 
     @Test
-    void getOneBook() throws URISyntaxException, UnsupportedEncodingException {
+    void getGameByIdReturnsGameResponseWhenGameExists() throws URISyntaxException, UnsupportedEncodingException {
         GameResponse testGameResponse = new GameResponse(1L, "Test Title", "Test Developer", "Test Description", null, "123456789012");
         Mockito.when(gameService.getGameById(1L)).thenReturn(testGameResponse);
         MockHttpRequest request = MockHttpRequest.get("/games/1");
@@ -76,7 +76,7 @@ class GameResourceTest {
 
 
     @Test
-    void createNewBook() throws URISyntaxException, UnsupportedEncodingException {
+    void createGameReturnsCreatedGameWhenValidInput() throws URISyntaxException, UnsupportedEncodingException {
         CreateGame testCreateGame = new CreateGame("Test Title", "Test Developer", "Test Description", null, "123456789012");
         Game testGame = new Game();
         testGame.setId(1L);
@@ -112,7 +112,7 @@ class GameResourceTest {
     }
 
     @Test
-    void updateGame() throws URISyntaxException, UnsupportedEncodingException {
+    void updateGameUpdatesGameSuccessfullyWhenValidInput() throws URISyntaxException, UnsupportedEncodingException {
         UpdateGame updateGame = new UpdateGame("Updated Title", "Updated Developer", "Updated Description", null, "987654321098");
         Long gameId = 1L;
 
@@ -140,7 +140,7 @@ class GameResourceTest {
     }
 
     @Test
-    void findDeveloper() throws URISyntaxException, UnsupportedEncodingException {
+    void findGamesByDeveloperReturnsGamesListWhenDeveloperExists() throws URISyntaxException, UnsupportedEncodingException {
         String developer = "Developer";
         List<GameResponse> expectedGames = List.of(
                 new GameResponse(1L, "Game 1", developer, "Description1", null, "123456789012"),
@@ -164,7 +164,7 @@ class GameResourceTest {
     }
 
     @Test
-    void findTitle() throws URISyntaxException, UnsupportedEncodingException {
+    void findGamesByTitleReturnsGamesListWhenTitleExists() throws URISyntaxException, UnsupportedEncodingException {
         String title = "GameTitle";
         List<GameResponse> expectedGames = List.of(
                 new GameResponse(1L, title, "Developer 1", "Description 1", null, "123456789012"),
