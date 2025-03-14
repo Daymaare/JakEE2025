@@ -13,6 +13,7 @@ import org.jboss.resteasy.mock.MockHttpRequest;
 import org.jboss.resteasy.mock.MockHttpResponse;
 import org.jboss.resteasy.spi.Dispatcher;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -33,7 +34,6 @@ class GameResourceTest {
     @Mock
     GameService gameService;
 
-
     Dispatcher dispatcher;
 
     @BeforeEach
@@ -48,6 +48,7 @@ class GameResourceTest {
     }
 
     @Test
+    @DisplayName("Get all games returns empty list when no games exist")
     void getAllGamesReturnsEmptyListWhenNoGamesExist() throws URISyntaxException, UnsupportedEncodingException {
         Mockito.when(gameService.getAllGames()).thenReturn(List.of());
 
@@ -61,6 +62,7 @@ class GameResourceTest {
     }
 
     @Test
+    @DisplayName("Get game by ID returns game response when game exists")
     void getGameByIdReturnsGameResponseWhenGameExists() throws URISyntaxException, UnsupportedEncodingException {
         GameResponse testGameResponse = new GameResponse(1L, "Test Title", "Test Developer", "Test Description", null, "123456789012");
         Mockito.when(gameService.getGameById(1L)).thenReturn(testGameResponse);
@@ -74,8 +76,8 @@ class GameResourceTest {
                 response.getContentAsString());
     }
 
-
     @Test
+    @DisplayName("Create game returns created game when valid input is provided")
     void createGameReturnsCreatedGameWhenValidInput() throws URISyntaxException, UnsupportedEncodingException {
         CreateGame testCreateGame = new CreateGame("Test Title", "Test Developer", "Test Description", null, "123456789012");
         Game testGame = new Game();
@@ -112,6 +114,7 @@ class GameResourceTest {
     }
 
     @Test
+    @DisplayName("Update game updates game successfully when valid input is provided")
     void updateGameUpdatesGameSuccessfullyWhenValidInput() throws URISyntaxException, UnsupportedEncodingException {
         UpdateGame updateGame = new UpdateGame("Updated Title", "Updated Developer", "Updated Description", null, "987654321098");
         Long gameId = 1L;
@@ -140,6 +143,7 @@ class GameResourceTest {
     }
 
     @Test
+    @DisplayName("Find games by developer returns games list when developer exists")
     void findGamesByDeveloperReturnsGamesListWhenDeveloperExists() throws URISyntaxException, UnsupportedEncodingException {
         String developer = "Developer";
         List<GameResponse> expectedGames = List.of(
@@ -149,7 +153,7 @@ class GameResourceTest {
 
         Mockito.when(gameService.findDeveloper(developer)).thenReturn(expectedGames);
 
-        String encodedDeveloper = URLEncoder.encode(developer, StandardCharsets.UTF_8.toString());
+        String encodedDeveloper = URLEncoder.encode(developer, StandardCharsets.UTF_8);
 
         MockHttpRequest request = MockHttpRequest.get("/games/developer/" + encodedDeveloper);
         MockHttpResponse response = new MockHttpResponse();
@@ -164,6 +168,7 @@ class GameResourceTest {
     }
 
     @Test
+    @DisplayName("Find games by title returns games list when title exists")
     void findGamesByTitleReturnsGamesListWhenTitleExists() throws URISyntaxException, UnsupportedEncodingException {
         String title = "GameTitle";
         List<GameResponse> expectedGames = List.of(
@@ -186,5 +191,4 @@ class GameResourceTest {
                 response.getContentAsString());
         Mockito.verify(gameService, Mockito.times(1)).findTitle(title);
     }
-
 }
