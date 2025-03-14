@@ -1,6 +1,12 @@
 # By default, build on JDK 21 on UBI 9.
 ARG jdk=23-jre
 ARG dist=ubi9-minimal
+
+FROM maven:3-eclipse-temurin-23 AS build
+WORKDIR /opt/jee2025
+COPY . /opt/jee2025
+RUN mvn package
+
 FROM eclipse-temurin:${jdk}-${dist}
 
 # Wildfly and PostgreSQL versions
