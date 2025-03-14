@@ -15,7 +15,7 @@ Innan du installerar projektet, se till att du har följande installerat på din
 1. Öppna terminalen och klona projektet till din lokala maskin:
 
    ```bash
-   git clone https://github.com/ditt-användarnamn/projekt-namn.git
+   git clone https://github.com/Daymaare/JakEE2025
    cd JakEE2025
    ```
 
