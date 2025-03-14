@@ -5,7 +5,6 @@ import jakarta.data.repository.CrudRepository;
 import jakarta.data.repository.Find;
 import jakarta.data.repository.Query;
 import jakarta.data.repository.Repository;
-import org.hibernate.type.descriptor.jdbc.internal.JdbcLiteralFormatterArray;
 
 import java.time.LocalDate;
 import java.util.List;
