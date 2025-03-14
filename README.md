@@ -26,7 +26,7 @@ Innan du installerar projektet, se till att du har följande installerat på din
 2. Starta applikationen med Docker Compose:
 
    ```bash
-   docker-compose up --build
+   docker-compose --profile production up
    ```
 
    Detta kommando bygger och startar alla tjänster som definieras i `docker-compose.yml`.
@@ -65,6 +65,14 @@ Applikationen erbjuder flera API-endpoints för att interagera med speldata. Hä
 - **Uppdatera ett spel**:
   - Endpoint: `PATCH /api/games/{id}`
   - Beskrivning: Uppdaterar detaljerna för ett befintligt spel.
+
+- **Sök efter spel med titel**:
+  - Endpoint: `GET /api/games/title/{title}`
+  - Beskrivning: Söker efter spel baserat på titeln.
+
+- **Sök efter spel med utvecklare**:
+  - Endpoint: `GET /api/games/developer/{developer}`
+  - Beskrivning: Söker efter spel baserat på utvecklarens namn.
 
 ## Felsökning
 
