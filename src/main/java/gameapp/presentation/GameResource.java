@@ -58,18 +58,6 @@ public class GameResource {
                 .build();
     }
 
-    //http://localhost:8080/api/games/batch
-    @POST
-    @Path("batch")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response createNewGames(@Valid List<CreateGame> createGames) {
-        List<GameResponse> gameResponses = gameService.createGames(createGames);
-        return Response.status(Response.Status.CREATED)
-                .entity(gameResponses)
-                .build();
-    }
-
     //http:localhost:8080/api/games/{{id}}
     @PATCH
     @Path("{id}")

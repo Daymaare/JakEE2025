@@ -71,25 +71,6 @@ public class GameService {
         return gameRepository.insert(game);
     }
 
-    public List<GameResponse> createGames(@Valid List<CreateGame> createGames) {
-        if (createGames == null || createGames.isEmpty()) {
-            throw new BadRequest("Game list cannot be null or empty");
-        }
-        createGames.forEach(createGame -> gameRepository
-                .findByTitleAndDeveloper(createGame.title(), createGame.developer())
-                .forEach(existingGame -> {
-                    throw new BadRequest(
-                            "A game with the title '" + createGame.title() + "' and developer '"
-                                    + createGame.developer() + "' already exists"
-                    );
-                }));
-
-        return createGames.stream()
-                .map(GameMapper::map)
-                .map(gameRepository::insert)
-                .map(GameMapper::map)
-                .toList();
-    }
 
     public void updateGame(@Valid UpdateGame newGame, Long id) {
         log.info("Updating game with ID " + id);
