@@ -3,10 +3,7 @@ package gameapp.dto;
 
 import gameapp.entity.Game;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
 
@@ -26,7 +23,7 @@ public record GameResponse(
         @Size(max = 500, message = "Description cannot exceed 500 characters")
         String description,
 
-        @Past
+        @NotNull(message = "Release Date must not be null")
         LocalDate releaseDate,
 
         @Column(unique = true)
