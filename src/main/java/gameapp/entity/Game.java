@@ -28,7 +28,7 @@ public class Game {
     @Size(max = 500, message = "Description cannot exceed 500 characters")
     private String description;
 
-    @Past(message = "Release date must be in the past")
+    @NotNull(message = "Release Date must not be null")
     private LocalDate releaseDate;
 
     @Column(unique = true)
