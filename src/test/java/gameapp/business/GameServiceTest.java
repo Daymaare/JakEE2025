@@ -22,6 +22,9 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class GameServiceTest {
@@ -42,7 +45,7 @@ class GameServiceTest {
         List<GameResponse> games = gameService.getAllGames();
 
         assertEquals(2, games.size());
-        Mockito.verify(gameRepository, Mockito.times(1)).findAll();
+        verify(gameRepository, Mockito.times(1)).findAll();
     }
 
     @Test
@@ -64,7 +67,7 @@ class GameServiceTest {
         GameResponse response = gameService.getGameById(1L);
 
         assertEquals(1L, response.id());
-        Mockito.verify(gameRepository, Mockito.times(1)).findById(1L);
+        verify(gameRepository, Mockito.times(1)).findById(1L);
     }
 
     @Test
@@ -73,7 +76,7 @@ class GameServiceTest {
         LocalDate releaseDate = LocalDate.of(2020, 1, 1);
         CreateGame createGame = new CreateGame("Title", "Developer", "Description", releaseDate, "123456789012");
         Game game = GameMapper.map(createGame);
-        Mockito.when(gameRepository.insert(Mockito.any(Game.class))).thenReturn(game);
+        Mockito.when(gameRepository.insert(any(Game.class))).thenReturn(game);
 
         Game createdGame = gameService.createGame(createGame);
 
@@ -84,7 +87,7 @@ class GameServiceTest {
                 () -> assertEquals(releaseDate, createdGame.getReleaseDate()),
                 () -> assertEquals("123456789012", createdGame.getUpc())
         );
-        Mockito.verify(gameRepository, Mockito.times(1)).insert(Mockito.any(Game.class));
+        verify(gameRepository, Mockito.times(1)).insert(any(Game.class));
     }
 
     @Test
@@ -117,7 +120,7 @@ class GameServiceTest {
         gameService.updateGame(updateGame, 1L);
 
         assertEquals("New Title", existingGame.getTitle());
-        Mockito.verify(gameRepository, Mockito.times(1)).update(existingGame);
+        verify(gameRepository, Mockito.times(1)).update(existingGame);
     }
 
     @Test
@@ -140,7 +143,7 @@ class GameServiceTest {
         List<GameResponse> games = gameService.findDeveloper("Developer");
 
         assertEquals(1, games.size());
-        Mockito.verify(gameRepository, Mockito.times(1)).findByDeveloper("Developer");
+        verify(gameRepository, Mockito.times(1)).findByDeveloper("Developer");
     }
 
     @Test
@@ -162,7 +165,7 @@ class GameServiceTest {
         List<GameResponse> games = gameService.findTitle("Title");
 
         assertEquals(1, games.size());
-        Mockito.verify(gameRepository, Mockito.times(1)).findByTitle("Title");
+        verify(gameRepository, Mockito.times(1)).findByTitle("Title");
     }
 
     @Test
@@ -172,5 +175,65 @@ class GameServiceTest {
 
         NotFound exception = assertThrows(NotFound.class, () -> gameService.findTitle("Title"));
         assertEquals("Game with title Title not found", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Update game with all fields in UpdateGame")
+    void updateGameWithAllFieldsInUpdateGame() {
+        // Arrange
+        UpdateGame updateGame = new UpdateGame(
+                "New Title",
+                "New Developer",
+                "New Description",
+                LocalDate.of(2021, 1, 1),
+                "123456789013"
+        );
+        Game existingGame = new Game();
+        existingGame.setId(1L);
+        existingGame.setTitle("Old Title");
+        existingGame.setDeveloper("Old Developer");
+        existingGame.setDescription("Old Description");
+        existingGame.setReleaseDate(LocalDate.of(2020, 1, 1));
+        existingGame.setUpc("123456789012");
+
+        Mockito.when(gameRepository.findById(1L)).thenReturn(Optional.of(existingGame));
+
+        gameService.updateGame(updateGame, 1L);
+
+        assertAll(
+                () -> assertEquals("New Title", existingGame.getTitle()),
+                () -> assertEquals("New Developer", existingGame.getDeveloper()),
+                () -> assertEquals("New Description", existingGame.getDescription()),
+                () -> assertEquals(LocalDate.of(2021, 1, 1), existingGame.getReleaseDate()),
+                () -> assertEquals("123456789013", existingGame.getUpc())
+        );
+        verify(gameRepository, Mockito.times(1)).update(existingGame);
+    }
+
+    @Test
+    @DisplayName("FindDeveloper throws BadRequestException when developer is null")
+    public void testFindDeveloperThrowsBadRequestWhenDeveloperIsNull() {
+        String developer = null;
+        BadRequest exception = assertThrows(BadRequest.class, () -> {
+            gameService.findDeveloper(developer);
+        });
+
+        assertEquals("Developer cannot be null or empty", exception.getMessage());
+
+        verify(gameRepository, never()).findByDeveloper(any());
+    }
+
+    @Test
+    @DisplayName("Create game throws BadRequestException when game with same title and developer exists")
+    void createGameThrowsBadRequestExceptionWhenGameWithSameTitleAndDeveloperExists() {
+        CreateGame createGame = new CreateGame("Title", "Developer", "Description", LocalDate.of(2020, 1, 1), "123456789012");
+        Game existingGame = new Game();
+        existingGame.setTitle("Title");
+        existingGame.setDeveloper("Developer");
+
+        Mockito.when(gameRepository.findByTitleAndDeveloper("Title", "Developer")).thenReturn(List.of(existingGame));
+
+        BadRequest exception = assertThrows(BadRequest.class, () -> gameService.createGame(createGame));
+        assertEquals("A game with the title 'Title' and developer 'Developer' already exists", exception.getMessage());
     }
 }
